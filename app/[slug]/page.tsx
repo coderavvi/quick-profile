@@ -107,14 +107,37 @@ export default function ClientProfilePage({ params }: { params: Promise<{ slug: 
           {/* Document Viewer */}
           <div className="p-8">
             {client.fileType === 'pdf' ? (
-              <div className="bg-gray-100 rounded-lg overflow-hidden" style={{ height: '70vh' }}>
-                <iframe
-                  src={client.fileUrl.includes('?dl=') ? client.fileUrl : `${client.fileUrl}?dl=1`}
-                  style={{ width: '100%', height: '100%', border: 'none' }}
-                  title={`${client.clientName} Document`}
-                  allowFullScreen
-                  allow="fullscreen"
-                />
+              <div>
+                {/* PDF Viewer using Google Docs Viewer (Works for any URL) */}
+                <div className="mb-4 bg-gray-100 rounded-lg overflow-hidden" style={{ height: '70vh' }}>
+                  <iframe
+                    src={`https://docs.google.com/viewer?url=${encodeURIComponent(client.fileUrl)}&embedded=true`}
+                    style={{ width: '100%', height: '100%', border: 'none' }}
+                    title={`${client.clientName} Document`}
+                    allowFullScreen
+                  />
+                </div>
+                
+                {/* Download and Alternative View Links */}
+                <div className="flex gap-2 justify-center items-center flex-wrap">
+                  <a
+                    href={client.fileUrl}
+                    download
+                    className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white font-medium rounded-lg transition-colors inline-flex items-center gap-2"
+                  >
+                    <span>📥</span>
+                    <span>Download PDF</span>
+                  </a>
+                  <a
+                    href={client.fileUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors inline-flex items-center gap-2"
+                  >
+                    <span>🔍</span>
+                    <span>Open in New Tab</span>
+                  </a>
+                </div>
               </div>
             ) : (
               <div className="flex justify-center items-center bg-gray-100 rounded-lg p-8" style={{ minHeight: '70vh' }}>

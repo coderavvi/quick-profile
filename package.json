@@ -18,9 +18,11 @@
     "mongoose": "^7.6.0",
     "next": "16.1.6",
     "next-auth": "^4.24.0",
+    "pdfjs-dist": "^5.5.207",
     "qrcode": "^1.5.3",
     "react": "19.2.3",
-    "react-dom": "19.2.3"
+    "react-dom": "19.2.3",
+    "react-pdf": "^10.4.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

@@ -48,10 +48,11 @@ export async function POST(request: NextRequest) {
 
       if (fileBuffer.slice(0, 4).equals(pdfSignature)) {
         fileType = 'pdf';
-        // Upload PDFs as 'auto' for better iframe compatibility
+        // Upload PDFs as 'raw' so they're accessible from /raw/upload/ path
+        // This ensures Google Docs Viewer and other services can access them properly
         result = await cloudinary.uploader.upload(tempFile, {
           folder: 'quickprofile',
-          resource_type: 'auto',
+          resource_type: 'raw',
           type: 'upload',
         });
       } else {

@@ -43,12 +43,6 @@ export async function GET(request: NextRequest) {
 // POST /api/clients - Create a new client
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-
-    if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
     await dbConnect();
 
     const data = await request.json();
@@ -90,9 +84,9 @@ export async function POST(request: NextRequest) {
 
     await client.save();
 
-    return NextResponse.json(client, { status: 201 });
+    return NextResponse.json(client.toObject ? client.toObject() : JSON.parse(JSON.stringify(client)), { status: 201 });
   } catch (error) {
-    console.error('Error creating client:', error);
+    console.error('POST /api/clients - Error creating client:', error);
     return NextResponse.json(
       { error: error instanceof Error ? error.message : 'An error occurred' },
       { status: 500 }

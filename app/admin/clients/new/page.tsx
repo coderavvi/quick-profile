@@ -282,7 +282,7 @@ export default function CreateClientPage() {
 						</label>
 						<div className='flex items-center'>
 							<span className='text-gray-600 mr-2'>
-								quickprofile.vercel.app/
+								quickprofile-eight.vercel.app/
 							</span>
 							<input
 								type='text'

@@ -63,7 +63,7 @@ export default function ClientProfilePage({ params }: { params: Promise<{ slug: 
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-500 mx-auto mb-4"></div>
           <p className="text-gray-600">Loading profile...</p>
@@ -74,7 +74,7 @@ export default function ClientProfilePage({ params }: { params: Promise<{ slug: 
 
   if (error || !client) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-4xl font-bold text-slate-900 mb-2">404</h1>
           <p className="text-gray-600 mb-4">Profile not found</p>
@@ -89,7 +89,7 @@ export default function ClientProfilePage({ params }: { params: Promise<{ slug: 
   // Check if profile is active
   if (!client.isActive) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-4xl font-bold text-slate-900 mb-2">Profile Unavailable</h1>
           <p className="text-gray-600 mb-4">This profile is currently inactive</p>
@@ -102,7 +102,7 @@ export default function ClientProfilePage({ params }: { params: Promise<{ slug: 
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 to-black flex items-center justify-center p-4">
+    <div className="min-h-screen bg-white flex items-center justify-center p-4">
       {/* Image Display - Centered with subtle info on hover */}
       <div className="relative w-full max-w-5xl group">
         <div className="overflow-hidden rounded-xl shadow-2xl">

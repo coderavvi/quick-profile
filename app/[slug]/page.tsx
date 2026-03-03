@@ -1,21 +1,41 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import dbConnect from '@/lib/db';
-import Client from '@/lib/models/Client';
-import { notFound } from 'next/navigation';
-import Image from 'next/image';
+import React from 'react';
 
-export default function ClientProfilePage({ params }: { params: { slug: string } }) {
-  const [client, setClient] = useState<any>(null);
+interface ClientData {
+  _id: string;
+  clientName: string;
+  companyName: string;
+  slug: string;
+  fileUrl: string;
+  fileType: 'pdf' | 'image';
+  createdAt: string;
+}
+
+export default function ClientProfilePage({ params }: { params: Promise<{ slug: string }> }) {
+  const [client, setClient] = useState<ClientData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [slug, setSlug] = useState<string | null>(null);
 
+  // Unwrap params on mount
   useEffect(() => {
+    const unwrapParams = async () => {
+      const resolvedParams = await params;
+      setSlug(resolvedParams.slug);
+    };
+    unwrapParams();
+  }, [params]);
+
+  // Fetch client when slug is available
+  useEffect(() => {
+    if (!slug) return;
+
     const fetchClient = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`/api/clients?slug=${params.slug}`);
+        const response = await fetch(`/api/clients?slug=${slug}`);
         
         if (!response.ok) {
           setError('Client not found');
@@ -23,7 +43,7 @@ export default function ClientProfilePage({ params }: { params: { slug: string }
         }
 
         const clients = await response.json();
-        const foundClient = clients.find((c: any) => c.slug === params.slug);
+        const foundClient = clients.find((c: any) => c.slug === slug);
 
         if (!foundClient) {
           setError('Client not found');
@@ -39,7 +59,7 @@ export default function ClientProfilePage({ params }: { params: { slug: string }
     };
 
     fetchClient();
-  }, [params.slug]);
+  }, [slug]);
 
   if (loading) {
     return (
@@ -89,9 +109,10 @@ export default function ClientProfilePage({ params }: { params: { slug: string }
             {client.fileType === 'pdf' ? (
               <div className="bg-gray-100 rounded-lg overflow-hidden" style={{ height: '70vh' }}>
                 <iframe
-                  src={client.fileUrl}
+                  src={`${client.fileUrl}${client.fileUrl.includes('?') ? '&' : '?'}fl_attachment`}
                   style={{ width: '100%', height: '100%', border: 'none' }}
                   title={`${client.clientName} Document`}
+                  allowFullScreen
                 />
               </div>
             ) : (
@@ -100,7 +121,8 @@ export default function ClientProfilePage({ params }: { params: { slug: string }
                   <img
                     src={client.fileUrl}
                     alt={`${client.clientName} Image`}
-                    className="w-full h-auto rounded-lg shadow-lg"
+                    className="w-full h-auto rounded-lg shadow-lg object-contain"
+                    style={{ maxHeight: '70vh' }}
                   />
                 </div>
               </div>

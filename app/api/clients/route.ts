@@ -4,16 +4,32 @@ import { authOptions } from '../auth/[...nextauth]/route';
 import dbConnect from '@/lib/db';
 import Client from '@/lib/models/Client';
 
-// GET /api/clients - List all clients
-export async function GET() {
+// GET /api/clients - List all clients or get by slug
+export async function GET(request: NextRequest) {
   try {
+    await dbConnect();
+
+    // Check for slug query parameter (public access for profile viewer)
+    const { searchParams } = new URL(request.url);
+    const slug = searchParams.get('slug');
+
+    if (slug) {
+      // Public endpoint - no authentication required for slug lookup
+      const client = await Client.findOne({ slug: slug.toLowerCase() });
+      
+      if (!client) {
+        return NextResponse.json([]);
+      }
+
+      return NextResponse.json([client]);
+    }
+
+    // Protected endpoint - requires authentication for full list
     const session = await getServerSession(authOptions);
 
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
-
-    await dbConnect();
 
     const clients = await Client.find().sort({ createdAt: -1 });
 

@@ -109,10 +109,11 @@ export default function ClientProfilePage({ params }: { params: Promise<{ slug: 
             {client.fileType === 'pdf' ? (
               <div className="bg-gray-100 rounded-lg overflow-hidden" style={{ height: '70vh' }}>
                 <iframe
-                  src={`${client.fileUrl}${client.fileUrl.includes('?') ? '&' : '?'}fl_attachment`}
+                  src={client.fileUrl.includes('?dl=') ? client.fileUrl : `${client.fileUrl}?dl=1`}
                   style={{ width: '100%', height: '100%', border: 'none' }}
                   title={`${client.clientName} Document`}
                   allowFullScreen
+                  allow="fullscreen"
                 />
               </div>
             ) : (

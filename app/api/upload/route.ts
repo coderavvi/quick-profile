@@ -19,9 +19,21 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const buffer = await request.arrayBuffer();
+    // Parse FormData from request
+    const formData = await request.formData();
+    const file = formData.get('file') as File;
+
+    if (!file) {
+      return NextResponse.json(
+        { error: 'No file provided' },
+        { status: 400 }
+      );
+    }
+
+    // Convert file to buffer
+    const buffer = await file.arrayBuffer();
     const tempDir = path.join('/tmp');
-    const tempFile = path.join(tempDir, `upload-${Date.now()}`);
+    const tempFile = path.join(tempDir, `upload-${Date.now()}-${file.name}`);
 
     // Write buffer to temporary file
     await fs.writeFile(tempFile, Buffer.from(buffer));
@@ -36,14 +48,18 @@ export async function POST(request: NextRequest) {
 
       if (fileBuffer.slice(0, 4).equals(pdfSignature)) {
         fileType = 'pdf';
-        result = await cloudinary.uploader.upload(tempFile, {
-          folder: 'quickprofile',
-          resource_type: 'raw',
-        });
-      } else {
+        // Upload PDFs as 'auto' for better iframe compatibility
         result = await cloudinary.uploader.upload(tempFile, {
           folder: 'quickprofile',
           resource_type: 'auto',
+          type: 'upload',
+        });
+      } else {
+        // Explicitly set resource_type for images
+        result = await cloudinary.uploader.upload(tempFile, {
+          folder: 'quickprofile',
+          resource_type: 'image',
+          type: 'upload',
         });
       }
 

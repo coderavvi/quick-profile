@@ -8,6 +8,7 @@ interface Client {
   clientName: string;
   companyName: string;
   slug: string;
+  isActive: boolean;
   createdAt: string;
 }
 
@@ -56,6 +57,23 @@ export default function DashboardPage() {
       setClients(clients.filter((c) => c._id !== id));
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to delete client');
+    }
+  };
+
+  const handleToggleStatus = async (id: string) => {
+    try {
+      const response = await fetch(`/api/clients/${id}`, {
+        method: 'PATCH',
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to toggle client status');
+      }
+
+      const updatedClient = await response.json();
+      setClients(clients.map((c) => (c._id === id ? updatedClient : c)));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to toggle client status');
     }
   };
 
@@ -111,7 +129,7 @@ export default function DashboardPage() {
         </div>
         <div className="bg-white rounded-lg shadow p-6 border border-gray-200">
           <div className="text-gray-600 text-sm font-medium mb-1">Active Profiles</div>
-          <div className="text-3xl font-bold text-slate-900">{clients.length}</div>
+          <div className="text-3xl font-bold text-slate-900">{clients.filter((c) => c.isActive).length}</div>
         </div>
       </div>
 
@@ -144,6 +162,7 @@ export default function DashboardPage() {
                   <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Client Name</th>
                   <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Company</th>
                   <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">URL Slug</th>
+                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Status</th>
                   <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Created</th>
                   <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Actions</th>
                 </tr>
@@ -162,6 +181,18 @@ export default function DashboardPage() {
                       >
                         /{client.slug}
                       </a>
+                    </td>
+                    <td className="px-6 py-4 text-sm">
+                      <button
+                        onClick={() => handleToggleStatus(client._id)}
+                        className={`px-3 py-1 rounded font-medium transition-colors ${
+                          client.isActive
+                            ? 'bg-green-50 text-green-700 hover:bg-green-100'
+                            : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
+                        }`}
+                      >
+                        {client.isActive ? 'Active' : 'Inactive'}
+                      </button>
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-600">{formatDate(client.createdAt)}</td>
                     <td className="px-6 py-4 text-sm flex gap-2">

@@ -132,3 +132,40 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
     );
   }
 }
+
+// PATCH /api/clients/[id]/toggle - Toggle active status
+export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  try {
+    const session = await getServerSession(authOptions);
+
+    if (!session) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    await dbConnect();
+
+    const { id } = await params;
+
+    if (!Types.ObjectId.isValid(id)) {
+      return NextResponse.json({ error: 'Invalid client ID' }, { status: 400 });
+    }
+
+    const client = await Client.findById(id);
+
+    if (!client) {
+      return NextResponse.json({ error: 'Client not found' }, { status: 404 });
+    }
+
+    // Toggle isActive status
+    client.isActive = !client.isActive;
+    await client.save();
+
+    return NextResponse.json(client);
+  } catch (error) {
+    console.error('Error toggling client status:', error);
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : 'An error occurred' },
+      { status: 500 }
+    );
+  }
+}

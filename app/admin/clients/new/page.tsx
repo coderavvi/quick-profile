@@ -317,6 +317,36 @@ export default function CreateClientPage() {
             </div>
           </div>
 
+          {/* Preview Section - Show when file is selected */}
+          {file && fileUrl && (
+            <div className="mb-8">
+              <label className="block text-sm font-medium text-gray-900 mb-2">
+                Preview
+              </label>
+              <div className="border border-gray-200 rounded-lg p-6 bg-gray-50">
+                {fileType === 'pdf' ? (
+                  <div className="flex items-center gap-4">
+                    <div className="text-4xl">📕</div>
+                    <div>
+                      <p className="font-medium text-gray-900">{file.name}</p>
+                      <p className="text-sm text-gray-600">
+                        {(file.size / 1024 / 1024).toFixed(2)} MB
+                      </p>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex justify-center">
+                    <img
+                      src={fileUrl}
+                      alt="Preview"
+                      className="max-w-xs max-h-64 rounded-lg shadow object-contain"
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
           {/* Submit Button */}
           <button
             type="submit"

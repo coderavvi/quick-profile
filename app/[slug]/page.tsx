@@ -10,6 +10,7 @@ interface ClientData {
   slug: string;
   fileUrl: string;
   fileType: 'pdf' | 'image';
+  isActive: boolean;
   createdAt: string;
 }
 
@@ -86,6 +87,21 @@ export default function ClientProfilePage({ params }: { params: Promise<{ slug: 
     );
   }
 
+  // Check if profile is active
+  if (!client.isActive) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-4xl font-bold text-slate-900 mb-2">Profile Unavailable</h1>
+          <p className="text-gray-600 mb-4">This profile is currently inactive</p>
+          <a href="/" className="text-amber-500 hover:text-amber-600 font-medium">
+            Go back home
+          </a>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -108,36 +124,55 @@ export default function ClientProfilePage({ params }: { params: Promise<{ slug: 
           <div className="p-8">
             {client.fileType === 'pdf' ? (
               <div>
-                {/* PDF Viewer using Google Docs Viewer (Works for any URL) */}
-                <div className="mb-4 bg-gray-100 rounded-lg overflow-hidden" style={{ height: '70vh' }}>
-                  <iframe
-                    src={`https://docs.google.com/viewer?url=${encodeURIComponent(client.fileUrl)}&embedded=true`}
-                    style={{ width: '100%', height: '100%', border: 'none' }}
-                    title={`${client.clientName} Document`}
-                    allowFullScreen
-                  />
-                </div>
-                
-                {/* Download and Alternative View Links */}
-                <div className="flex gap-2 justify-center items-center flex-wrap">
-                  <a
-                    href={client.fileUrl}
-                    download
-                    className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white font-medium rounded-lg transition-colors inline-flex items-center gap-2"
-                  >
-                    <span>📥</span>
-                    <span>Download PDF</span>
-                  </a>
-                  <a
-                    href={client.fileUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors inline-flex items-center gap-2"
-                  >
-                    <span>🔍</span>
-                    <span>Open in New Tab</span>
-                  </a>
-                </div>
+                {/* Determine PDF viewer URL - handle both /image/ and /raw/ paths */}
+                {/* For Cloudinary /image/ URLs, we need to transform them to /raw/ for proper PDF serving */}
+                {/* For URLs already in /raw/, use as-is */}
+                {/* For external URLs, use as-is */}
+                {(() => {
+                  let pdfUrl = client.fileUrl;
+                  
+                  // If URL contains Cloudinary and is in /image/ path, transform to /raw/
+                  if (pdfUrl.includes('cloudinary.com') && pdfUrl.includes('/image/upload/')) {
+                    pdfUrl = pdfUrl.replace('/image/upload/', '/raw/upload/');
+                  }
+                  
+                  // Encode the URL for Google Docs Viewer
+                  const encodedUrl = encodeURIComponent(pdfUrl);
+                  
+                  return (
+                    <div>
+                      <div className="mb-4 bg-gray-100 rounded-lg overflow-hidden" style={{ height: '70vh' }}>
+                        <iframe
+                          src={`https://docs.google.com/viewer?url=${encodedUrl}&embedded=true`}
+                          style={{ width: '100%', height: '100%', border: 'none' }}
+                          title={`${client.clientName} Document`}
+                          allowFullScreen
+                        />
+                      </div>
+                      
+                      {/* Download and Alternative View Links */}
+                      <div className="flex gap-2 justify-center items-center flex-wrap">
+                        <a
+                          href={client.fileUrl}
+                          download
+                          className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white font-medium rounded-lg transition-colors inline-flex items-center gap-2"
+                        >
+                          <span>📥</span>
+                          <span>Download PDF</span>
+                        </a>
+                        <a
+                          href={client.fileUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors inline-flex items-center gap-2"
+                        >
+                          <span>🔍</span>
+                          <span>Open in New Tab</span>
+                        </a>
+                      </div>
+                    </div>
+                  );
+                })()}
               </div>
             ) : (
               <div className="flex justify-center items-center bg-gray-100 rounded-lg p-8" style={{ minHeight: '70vh' }}>

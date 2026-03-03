@@ -15,7 +15,11 @@ export async function GET(request: NextRequest) {
 
     if (slug) {
       // Public endpoint - no authentication required for slug lookup
-      const client = await Client.findOne({ slug: slug.toLowerCase() });
+      // Only show active clients
+      const client = await Client.findOne({ 
+        slug: slug.toLowerCase(),
+        isActive: true
+      });
       
       if (!client) {
         return NextResponse.json([]);
@@ -88,6 +92,7 @@ export async function POST(request: NextRequest) {
       slug: slug.toLowerCase(),
       fileUrl,
       fileType,
+      isActive: true,
     });
 
     await client.save();

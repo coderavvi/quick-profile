@@ -24,8 +24,7 @@ const clientSchema = new Schema<IClient>(
       type: String,
       required: [true, 'Please provide a slug'],
       unique: true,
-      lowercase: true,
-      match: [/^[a-z0-9-]+$/, 'Slug can only contain lowercase letters, numbers, and hyphens'],
+      match: [/^[a-zA-Z0-9\-_.~]+$/, 'Slug can only contain letters, numbers, hyphens (-), underscores (_), periods (.), and tildes (~)'],
     },
     fileUrl: {
       type: String,

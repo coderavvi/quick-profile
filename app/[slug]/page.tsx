@@ -43,7 +43,7 @@ export default function ClientProfilePage({ params }: { params: Promise<{ slug: 
         }
 
         const clients = await response.json();
-        const foundClient = clients.find((c: any) => c.slug === slug);
+        const foundClient = clients.find((c: any) => c.slug.toLowerCase() === slug.toLowerCase());
 
         if (!foundClient) {
           setError('Client not found');
@@ -102,56 +102,22 @@ export default function ClientProfilePage({ params }: { params: Promise<{ slug: 
   }
 
   return (
-    <div className="min-h-screen bg-black flex flex-col">
-      {/* Header */}
-      <div className="bg-white border-b border-gray-200 shadow-sm flex-shrink-0">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <h1 className="text-xl font-bold text-slate-900">QuickProfile</h1>
-        </div>
-      </div>
-
-      {/* Image Display - Full Height */}
-      <div className="flex-1 flex flex-col items-center justify-center overflow-hidden bg-black p-4">
-        <div className="max-w-6xl w-full h-full flex items-center justify-center">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 to-black flex items-center justify-center p-4">
+      {/* Image Display - Centered with subtle info on hover */}
+      <div className="relative w-full max-w-5xl group">
+        <div className="overflow-hidden rounded-xl shadow-2xl">
           <img
             src={client.fileUrl}
             alt={`${client.clientName} Profile`}
-            className="w-full h-full object-contain rounded-lg"
+            className="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-105"
           />
         </div>
-      </div>
-
-      {/* Footer - Client Info and Actions */}
-      <div className="bg-white border-t border-gray-200 shadow-sm flex-shrink-0">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="mb-4">
-            <h2 className="text-2xl font-bold text-slate-900">{client.clientName}</h2>
-            <p className="text-amber-500 text-lg">{client.companyName}</p>
-          </div>
-
-          {/* Action Buttons */}
-          <div className="flex gap-2 flex-wrap">
-            <a
-              href={client.fileUrl}
-              download
-              className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white font-medium rounded-lg transition-colors inline-flex items-center gap-2"
-            >
-              <span>📥</span>
-              <span>Download Image</span>
-            </a>
-            <a
-              href={client.fileUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors inline-flex items-center gap-2"
-            >
-              <span>🔍</span>
-              <span>Open in New Tab</span>
-            </a>
-          </div>
-
-          {/* Created Date */}
-          <p className="text-gray-600 text-sm mt-6">
+        
+        {/* Subtle Info Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none flex flex-col justify-end p-6">
+          <h2 className="text-2xl font-bold text-white mb-1">{client.clientName}</h2>
+          <p className="text-amber-400 text-lg mb-4">{client.companyName}</p>
+          <p className="text-gray-300 text-xs">
             Created on {new Date(client.createdAt).toLocaleDateString('en-US', {
               year: 'numeric',
               month: 'long',

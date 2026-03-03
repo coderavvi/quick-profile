@@ -14,8 +14,9 @@ export async function GET(request: NextRequest) {
     if (slug) {
       // Public endpoint - no authentication required for slug lookup
       // Only show active clients
+      // Use case-insensitive search
       const client = await Client.findOne({ 
-        slug: slug.toLowerCase(),
+        slug: { $regex: `^${slug}$`, $options: 'i' },
         isActive: true
       });
       
@@ -57,7 +58,9 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if slug already exists
-    const existingClient = await Client.findOne({ slug: slug.toLowerCase() });
+    const existingClient = await Client.findOne({ 
+      slug: { $regex: `^${slug}$`, $options: 'i' }
+    });
     if (existingClient) {
       return NextResponse.json(
         { error: 'Slug already exists' },
@@ -65,11 +68,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Validate slug format
-    const slugRegex = /^[a-z0-9-]+$/;
-    if (!slugRegex.test(slug.toLowerCase())) {
+    // Validate slug format - Allow special characters: letters (all cases), numbers, hyphens, underscores, periods, tildes
+    const slugRegex = /^[a-zA-Z0-9\-_.~]+$/;
+    if (!slugRegex.test(slug)) {
       return NextResponse.json(
-        { error: 'Slug can only contain lowercase letters, numbers, and hyphens' },
+        { error: 'Slug can only contain letters, numbers, hyphens (-), underscores (_), periods (.), and tildes (~)' },
         { status: 400 }
       );
     }
@@ -77,7 +80,7 @@ export async function POST(request: NextRequest) {
     const client = new Client({
       clientName,
       companyName,
-      slug: slug.toLowerCase(),
+      slug: slug,
       fileUrl,
       isActive: true,
     });

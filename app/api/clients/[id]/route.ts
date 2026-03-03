@@ -50,7 +50,8 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     // If slug is being changed, check for uniqueness
     if (data.slug && data.slug !== client.slug) {
       const existingClient = await Client.findOne({
-        slug: data.slug.toLowerCase(),
+        slug: { $regex: `^${data.slug}$`, $options: 'i' },
+        _id: { $ne: id }
       });
       if (existingClient) {
         return NextResponse.json(
@@ -62,14 +63,13 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
 
     // Validate slug format if provided
     if (data.slug) {
-      const slugRegex = /^[a-z0-9-]+$/;
-      if (!slugRegex.test(data.slug.toLowerCase())) {
+      const slugRegex = /^[a-zA-Z0-9\-_.~]+$/;
+      if (!slugRegex.test(data.slug)) {
         return NextResponse.json(
-          { error: 'Slug can only contain lowercase letters, numbers, and hyphens' },
+          { error: 'Slug can only contain letters, numbers, hyphens (-), underscores (_), periods (.), and tildes (~)' },
           { status: 400 }
         );
       }
-      data.slug = data.slug.toLowerCase();
     }
 
     const updatedClient = await Client.findByIdAndUpdate(id, data, {

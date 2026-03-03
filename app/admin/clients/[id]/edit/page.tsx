@@ -9,7 +9,6 @@ interface ClientData {
   companyName: string;
   slug: string;
   fileUrl: string;
-  fileType: 'pdf' | 'image';
 }
 
 interface FormData {
@@ -90,10 +89,10 @@ export default function EditClientPage() {
     const selectedFile = e.target.files?.[0];
     if (!selectedFile) return;
 
-    // Validate file type
-    const validTypes = ['application/pdf', 'image/jpeg', 'image/png', 'image/jpg'];
+    // Validate file type - only images
+    const validTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif', 'image/webp'];
     if (!validTypes.includes(selectedFile.type)) {
-      setError('Only PDF, JPG, and PNG files are allowed');
+      setError('Only image files (JPG, PNG, GIF, WebP) are allowed');
       return;
     }
 
@@ -128,7 +127,6 @@ export default function EditClientPage() {
       }
 
       let fileUrl = client?.fileUrl;
-      let fileType = client?.fileType;
 
       // Upload new file if selected
       if (file) {
@@ -149,7 +147,6 @@ export default function EditClientPage() {
 
         const uploadResult = await uploadResponse.json();
         fileUrl = uploadResult.url;
-        fileType = uploadResult.fileType;
       }
 
       // Update client
@@ -163,7 +160,6 @@ export default function EditClientPage() {
           companyName: formData.companyName,
           slug: formData.slug,
           fileUrl,
-          fileType,
         }),
       });
 
@@ -299,16 +295,13 @@ export default function EditClientPage() {
               Current File
             </label>
             <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
-              <p className="text-sm text-gray-600 mb-2">
-                Type: <span className="font-medium text-gray-900">{client.fileType.toUpperCase()}</span>
-              </p>
               <a
                 href={client.fileUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-amber-500 hover:text-amber-600 text-sm font-medium break-all"
               >
-                View File
+                View Image
               </a>
             </div>
           </div>

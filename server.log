@@ -1,0 +1,53 @@
+
+> quickprofile@0.1.0 dev
+> next dev
+
+⚠ Warning: Next.js inferred your workspace root, but it may not be correct.
+ We detected multiple lockfiles and selected the directory of /home/coderavvi/package-lock.json as the root directory.
+ To silence this warning, set `turbopack.root` in your Next.js config, or consider removing one of the lockfiles if it's not needed.
+   See https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopack#root-directory for more information.
+ Detected additional lockfiles: 
+   * /home/coderavvi/Documents/Projects/Geek/Quick Profile/quickprofile/package-lock.json
+
+▲ Next.js 16.1.6 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.225.150:3000
+- Environments: .env.local
+
+✓ Starting...
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+✓ Ready in 2.3s
+ GET /login?callbackUrl=%2Fadmin%2Fdashboard 200 in 1482ms (compile: 590ms, render: 892ms)
+ GET /admin/dashboard 200 in 1531ms (compile: 761ms, proxy.ts: 251ms, render: 519ms)
+ GET /tabson-daniel 200 in 2.7s (compile: 2.5s, render: 154ms)
+ GET /api/auth/session 200 in 2.2s (compile: 2.1s, render: 34ms)
+ GET /api/auth/session 200 in 2.1s (compile: 2.0s, render: 52ms)
+ GET /api/auth/session 200 in 75ms (compile: 55ms, render: 20ms)
+ GET /api/auth/session 200 in 17ms (compile: 4ms, render: 13ms)
+ GET /api/clients 200 in 26.2s (compile: 10ms, render: 26.1s)
+ GET /api/clients 200 in 6.4s (compile: 15ms, render: 6.4s)
+ GET /api/clients?slug=tabson-daniel 200 in 27.8s (compile: 94ms, render: 27.7s)
+ GET /login?callbackUrl=%2Fadmin%2Fdashboard 200 in 111ms (compile: 6ms, render: 105ms)
+ GET /api/auth/session 200 in 62ms (compile: 51ms, render: 11ms)
+ GET /api/auth/session 200 in 15ms (compile: 4ms, render: 11ms)
+✓ Compiled in 77ms
+ GET /login?callbackUrl=%2Fadmin%2Fdashboard 200 in 97ms (compile: 5ms, render: 91ms)
+ GET /api/auth/session 200 in 63ms (compile: 45ms, render: 17ms)
+ GET /api/auth/session 200 in 14ms (compile: 4ms, render: 11ms)
+ GET /api/auth/session 200 in 16ms (compile: 4ms, render: 12ms)
+✓ Compiled in 41ms
+ GET /api/clients 401 in 26ms (compile: 8ms, render: 18ms)
+✓ Compiled in 47ms
+✓ Compiled in 33ms
+✓ Compiled in 45ms
+ GET /login?callbackUrl=%2Fadmin%2Fdashboard 200 in 139ms (compile: 47ms, render: 92ms)
+ GET /api/auth/session 200 in 62ms (compile: 49ms, render: 13ms)
+ GET /api/auth/session 200 in 14ms (compile: 5ms, render: 9ms)
+ GET /api/auth/session 200 in 12ms (compile: 3ms, render: 9ms)
+ GET /api/auth/session 200 in 14ms (compile: 3ms, render: 10ms)
+ GET /login?callbackUrl=%2Fadmin%2Fdashboard 200 in 131ms (compile: 8ms, render: 123ms)
+ GET /api/auth/session 200 in 62ms (compile: 50ms, render: 12ms)
+ GET /api/auth/session 200 in 15ms (compile: 5ms, render: 10ms)
+ GET /api/auth/session 200 in 12ms (compile: 3ms, render: 9ms)
+ GET /api/auth/session 200 in 14ms (compile: 3ms, render: 11ms)
+ GET /api/auth/session 200 in 13ms (compile: 5ms, render: 9ms)

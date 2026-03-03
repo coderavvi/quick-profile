@@ -9,7 +9,6 @@ interface ClientData {
   companyName: string;
   slug: string;
   fileUrl: string;
-  fileType: 'pdf' | 'image';
   isActive: boolean;
   createdAt: string;
 }
@@ -103,101 +102,62 @@ export default function ClientProfilePage({ params }: { params: Promise<{ slug: 
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-black flex flex-col">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 shadow-sm">
+      <div className="bg-white border-b border-gray-200 shadow-sm flex-shrink-0">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <h1 className="text-xl font-bold text-slate-900">QuickProfile</h1>
         </div>
       </div>
 
-      {/* Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-          {/* Client Info */}
-          <div className="bg-gradient-to-r from-slate-900 to-slate-800 text-white p-8">
-            <h2 className="text-3xl font-bold mb-2">{client.clientName}</h2>
+      {/* Image Display - Full Height */}
+      <div className="flex-1 flex flex-col items-center justify-center overflow-hidden bg-black p-4">
+        <div className="max-w-6xl w-full h-full flex items-center justify-center">
+          <img
+            src={client.fileUrl}
+            alt={`${client.clientName} Profile`}
+            className="w-full h-full object-contain rounded-lg"
+          />
+        </div>
+      </div>
+
+      {/* Footer - Client Info and Actions */}
+      <div className="bg-white border-t border-gray-200 shadow-sm flex-shrink-0">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <div className="mb-4">
+            <h2 className="text-2xl font-bold text-slate-900">{client.clientName}</h2>
             <p className="text-amber-500 text-lg">{client.companyName}</p>
           </div>
 
-          {/* Document Viewer */}
-          <div className="p-8">
-            {client.fileType === 'pdf' ? (
-              <div>
-                {/* Determine PDF viewer URL - handle both /image/ and /raw/ paths */}
-                {/* For Cloudinary /image/ URLs, we need to transform them to /raw/ for proper PDF serving */}
-                {/* For URLs already in /raw/, use as-is */}
-                {/* For external URLs, use as-is */}
-                {(() => {
-                  let pdfUrl = client.fileUrl;
-                  
-                  // If URL contains Cloudinary and is in /image/ path, transform to /raw/
-                  if (pdfUrl.includes('cloudinary.com') && pdfUrl.includes('/image/upload/')) {
-                    pdfUrl = pdfUrl.replace('/image/upload/', '/raw/upload/');
-                  }
-                  
-                  // Encode the URL for Google Docs Viewer
-                  const encodedUrl = encodeURIComponent(pdfUrl);
-                  
-                  return (
-                    <div>
-                      <div className="mb-4 bg-gray-100 rounded-lg overflow-hidden" style={{ height: '70vh' }}>
-                        <iframe
-                          src={`https://docs.google.com/viewer?url=${encodedUrl}&embedded=true`}
-                          style={{ width: '100%', height: '100%', border: 'none' }}
-                          title={`${client.clientName} Document`}
-                          allowFullScreen
-                        />
-                      </div>
-                      
-                      {/* Download and Alternative View Links */}
-                      <div className="flex gap-2 justify-center items-center flex-wrap">
-                        <a
-                          href={client.fileUrl}
-                          download
-                          className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white font-medium rounded-lg transition-colors inline-flex items-center gap-2"
-                        >
-                          <span>📥</span>
-                          <span>Download PDF</span>
-                        </a>
-                        <a
-                          href={client.fileUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors inline-flex items-center gap-2"
-                        >
-                          <span>🔍</span>
-                          <span>Open in New Tab</span>
-                        </a>
-                      </div>
-                    </div>
-                  );
-                })()}
-              </div>
-            ) : (
-              <div className="flex justify-center items-center bg-gray-100 rounded-lg p-8" style={{ minHeight: '70vh' }}>
-                <div className="max-w-2xl w-full">
-                  <img
-                    src={client.fileUrl}
-                    alt={`${client.clientName} Image`}
-                    className="w-full h-auto rounded-lg shadow-lg object-contain"
-                    style={{ maxHeight: '70vh' }}
-                  />
-                </div>
-              </div>
-            )}
+          {/* Action Buttons */}
+          <div className="flex gap-2 flex-wrap">
+            <a
+              href={client.fileUrl}
+              download
+              className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white font-medium rounded-lg transition-colors inline-flex items-center gap-2"
+            >
+              <span>📥</span>
+              <span>Download Image</span>
+            </a>
+            <a
+              href={client.fileUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors inline-flex items-center gap-2"
+            >
+              <span>🔍</span>
+              <span>Open in New Tab</span>
+            </a>
           </div>
 
-          {/* Footer */}
-          <div className="bg-gray-50 border-t border-gray-200 p-8 text-center">
-            <p className="text-gray-600 text-sm">
-              Created on {new Date(client.createdAt).toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-              })}
-            </p>
-          </div>
+          {/* Created Date */}
+          <p className="text-gray-600 text-sm mt-6">
+            Created on {new Date(client.createdAt).toLocaleDateString('en-US', {
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric',
+            })}
+          </p>
         </div>
       </div>
     </div>

@@ -1,6 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth/next';
-import { authOptions } from '../auth/[...nextauth]/route';
 import dbConnect from '@/lib/db';
 import Client from '@/lib/models/Client';
 
@@ -25,20 +23,16 @@ export async function GET(request: NextRequest) {
         return NextResponse.json([]);
       }
 
-      return NextResponse.json([client]);
+      return NextResponse.json([client.toObject ? client.toObject() : JSON.parse(JSON.stringify(client))]);
     }
 
-    // Protected endpoint - requires authentication for full list
-    const session = await getServerSession(authOptions);
-
-    if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
+    // List all clients
     const clients = await Client.find().sort({ createdAt: -1 });
+    const clientObjects = clients.map(c => c.toObject ? c.toObject() : JSON.parse(JSON.stringify(c)));
 
-    return NextResponse.json(clients);
+    return NextResponse.json(clientObjects);
   } catch (error) {
+    console.error('GET /api/clients - Error:', error);
     return NextResponse.json(
       { error: error instanceof Error ? error.message : 'An error occurred' },
       { status: 500 }
@@ -59,9 +53,9 @@ export async function POST(request: NextRequest) {
 
     const data = await request.json();
 
-    const { clientName, companyName, slug, fileUrl, fileType } = data;
+    const { clientName, companyName, slug, fileUrl } = data;
 
-    if (!clientName || !companyName || !slug || !fileUrl || !fileType) {
+    if (!clientName || !companyName || !slug || !fileUrl) {
       return NextResponse.json(
         { error: 'Missing required fields' },
         { status: 400 }
@@ -91,7 +85,6 @@ export async function POST(request: NextRequest) {
       companyName,
       slug: slug.toLowerCase(),
       fileUrl,
-      fileType,
       isActive: true,
     });
 

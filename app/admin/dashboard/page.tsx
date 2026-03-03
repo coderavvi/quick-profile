@@ -24,7 +24,9 @@ export default function DashboardPage() {
   const fetchClients = async () => {
     try {
       setLoading(true);
-      const response = await fetch('/api/clients');
+      const response = await fetch('/api/clients', {
+        credentials: 'include',
+      });
 
       if (!response.ok) {
         throw new Error('Failed to fetch clients');
@@ -48,6 +50,7 @@ export default function DashboardPage() {
     try {
       const response = await fetch(`/api/clients/${id}`, {
         method: 'DELETE',
+        credentials: 'include',
       });
 
       if (!response.ok) {
@@ -61,19 +64,34 @@ export default function DashboardPage() {
   };
 
   const handleToggleStatus = async (id: string) => {
+    console.log('Toggle button clicked for client:', id);
     try {
+      console.log('Sending PATCH request to /api/clients/' + id);
       const response = await fetch(`/api/clients/${id}`, {
         method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
       });
 
+      console.log('PATCH response status:', response.status);
+      console.log('PATCH response ok:', response.ok);
+
       if (!response.ok) {
-        throw new Error('Failed to toggle client status');
+        const errorData = await response.json();
+        console.log('Error response:', errorData);
+        throw new Error(errorData.error || 'Failed to toggle client status');
       }
 
       const updatedClient = await response.json();
+      console.log('Updated client:', updatedClient);
       setClients(clients.map((c) => (c._id === id ? updatedClient : c)));
+      setError(null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to toggle client status');
+      const errorMessage = err instanceof Error ? err.message : 'Failed to toggle client status';
+      console.error('Toggle status error:', errorMessage);
+      setError(errorMessage);
     }
   };
 
@@ -184,8 +202,9 @@ export default function DashboardPage() {
                     </td>
                     <td className="px-6 py-4 text-sm">
                       <button
+                        type="button"
                         onClick={() => handleToggleStatus(client._id)}
-                        className={`px-3 py-1 rounded font-medium transition-colors ${
+                        className={`px-3 py-1 rounded font-medium transition-colors cursor-pointer ${
                           client.isActive
                             ? 'bg-green-50 text-green-700 hover:bg-green-100'
                             : 'bg-gray-50 text-gray-700 hover:bg-gray-100'

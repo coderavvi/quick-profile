@@ -30,6 +30,23 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Validate file type - only accept images
+    const validImageTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif', 'image/webp'];
+    if (!validImageTypes.includes(file.type)) {
+      return NextResponse.json(
+        { error: 'Only image files (JPG, PNG, GIF, WebP) are allowed' },
+        { status: 400 }
+      );
+    }
+
+    // Validate file size (max 50MB)
+    if (file.size > 50 * 1024 * 1024) {
+      return NextResponse.json(
+        { error: 'File size must be less than 50MB' },
+        { status: 400 }
+      );
+    }
+
     // Convert file to buffer
     const buffer = await file.arrayBuffer();
     const tempDir = path.join('/tmp');
@@ -38,37 +55,18 @@ export async function POST(request: NextRequest) {
     // Write buffer to temporary file
     await fs.writeFile(tempFile, Buffer.from(buffer));
 
-    let result;
-    let fileType = 'image';
-
     try {
-      // Detect file type based on magic bytes
-      const fileBuffer = await fs.readFile(tempFile);
-      const pdfSignature = Buffer.from([0x25, 0x50, 0x44, 0x46]); // %PDF
-
-      if (fileBuffer.slice(0, 4).equals(pdfSignature)) {
-        fileType = 'pdf';
-        // Upload PDFs as 'raw' so they're accessible from /raw/upload/ path
-        // This ensures Google Docs Viewer and other services can access them properly
-        result = await cloudinary.uploader.upload(tempFile, {
-          folder: 'quickprofile',
-          resource_type: 'raw',
-          type: 'upload',
-        });
-      } else {
-        // Explicitly set resource_type for images
-        result = await cloudinary.uploader.upload(tempFile, {
-          folder: 'quickprofile',
-          resource_type: 'image',
-          type: 'upload',
-        });
-      }
+      // Upload image to Cloudinary
+      const result = await cloudinary.uploader.upload(tempFile, {
+        folder: 'quickprofile',
+        resource_type: 'image',
+        type: 'upload',
+      });
 
       await fs.unlink(tempFile);
 
       return NextResponse.json({
         url: result.secure_url,
-        fileType,
         publicId: result.public_id,
       });
     } catch (uploadError) {

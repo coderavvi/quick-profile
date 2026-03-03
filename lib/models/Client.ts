@@ -6,7 +6,6 @@ interface IClient {
   companyName: string;
   slug: string;
   fileUrl: string;
-  fileType: 'pdf' | 'image';
   isActive: boolean;
   createdAt?: Date;
 }
@@ -31,11 +30,6 @@ const clientSchema = new Schema<IClient>(
     fileUrl: {
       type: String,
       required: [true, 'Please provide a file URL'],
-    },
-    fileType: {
-      type: String,
-      enum: ['pdf', 'image'],
-      required: [true, 'Please specify file type'],
     },
     isActive: {
       type: Boolean,

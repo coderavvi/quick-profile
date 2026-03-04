@@ -271,7 +271,7 @@ export default function EditClientPage() {
               Custom URL Slug *
             </label>
             <div className="flex items-center">
-              <span className="text-gray-600 mr-2">quickprofile.vercel.app/</span>
+              <span className="text-gray-600 mr-2">fedprofile.vercel.app/</span>
               <input
                 type="text"
                 name="slug"

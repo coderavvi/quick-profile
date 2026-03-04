@@ -99,13 +99,6 @@ function LoginForm() {
               {isLoading ? 'Signing in...' : 'Sign In'}
             </button>
           </form>
-
-          {/* Demo Credentials */}
-          <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-            <p className="text-xs font-semibold text-blue-700 mb-1">Demo Credentials:</p>
-            <p className="text-xs text-blue-600">Email: admin@quickprofile.com</p>
-            <p className="text-xs text-blue-600">Password: password123</p>
-          </div>
         </div>
       </div>
     </div>
